@@ -95,6 +95,9 @@ module Rack
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE if use_ssl && ssl_verify_none
           http.request(target_request)
         end
+        if target_response.code == "301"
+          target_response = Net::HTTP.get_response(URI.parse(target_response.header['location']))
+        end
       end
 
       headers = (target_response.respond_to?(:headers) && target_response.headers) || target_response.to_hash
